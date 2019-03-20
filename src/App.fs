@@ -37,7 +37,7 @@ let view (model:Model) dispatch =
         button [ OnClick (fun _ -> dispatch Decrement) ] [ str "-" ] ]
 
 // App
-Program.mkSimple init update view
+Program.mkSimple Calculator.Model.init Calculator.Update.update Calculator.View.view
 |> Program.withReact "elmish-app"
 |> Program.withConsoleTrace
 |> Program.run
