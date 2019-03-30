@@ -6,10 +6,30 @@ open Fable.Helpers.React.Props
 
 let keyLayout =
     [
-        ["7", Digit 7;  "8", Digit 8;  "9", Digit 9;            "C", ClearKey]
-        ["4", Digit 4;  "5", Digit 5;  "6", Digit 6;            "/", Operator Division]
-        ["1", Digit 1;  "2", Digit 2;  "3", Digit 3;            "*", Operator Multiplication]
-        ["0", Digit 0;  "=", EqualKey; "+", Operator Addition;  "-", Operator Subtraction]
+        [
+            "7", Digit 7
+            "8", Digit 8
+            "9", Digit 9
+            "C", ClearKey
+        ]
+        [
+            "4", Digit 4
+            "5", Digit 5
+            "6", Digit 6
+            "/", Operator Division
+        ]
+        [
+            "1", Digit 1
+            "2", Digit 2
+            "3", Digit 3
+            "*", Operator Multiplication
+        ]
+        [
+            "0", Digit 0
+            "=", EqualKey
+            "+", Operator Addition
+            "-", Operator Subtraction
+        ]
     ]
 
 let viewButton (caption, key) dispatch =
