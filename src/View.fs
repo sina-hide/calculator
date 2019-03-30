@@ -3,6 +3,7 @@ module Calculator.View
 open Calculator.Model
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
+open Fable.Import.React
 
 let keyLayout =
     [
@@ -31,6 +32,16 @@ let keyLayout =
             "-", Operator Subtraction
         ]
     ]
+
+let handleShortcut (shortcut:KeyboardEvent) dispatch =
+    let pressedShortcut = shortcut.key
+    let foundCell =
+        keyLayout
+        |> List.concat
+        |> List.tryFind (fun (caption, key) -> caption = pressedShortcut)
+    match foundCell with
+    | Some (_, key) -> dispatch (KeyPress key)
+    | None -> ()
 
 let viewButton (caption, key) dispatch =
     button
@@ -71,7 +82,9 @@ let viewTable keyTable dispatch =
 
 let view model dispatch =
     div
-        []
+        [
+            OnKeyPress (fun shortcut -> handleShortcut shortcut dispatch)
+        ]
         [
             div
                 [Style [FontSize 20]]
