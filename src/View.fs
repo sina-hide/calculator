@@ -66,7 +66,7 @@ let viewButton (caption, key) dispatch =
                 [
                     Style [
                         Height 40
-                        Width 40
+                        Width 30
                         Display "table-cell"
                         TextAlign "center"
                         VerticalAlign "middle"
