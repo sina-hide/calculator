@@ -1,9 +1,10 @@
 module Calculator.View
 
 open Calculator.Model
+open Elmish
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
-open Fable.Import.React
+open Fable.Import
 
 let keyLayout =
     [
@@ -33,15 +34,23 @@ let keyLayout =
         ]
     ]
 
-let handleShortcut (shortcut:KeyboardEvent) dispatch =
+let handleShortcut (shortcut:Browser.KeyboardEvent) dispatch =
     let pressedShortcut = shortcut.key
     let foundCell =
         keyLayout
         |> List.concat
         |> List.tryFind (fun (caption, key) -> caption = pressedShortcut)
     match foundCell with
-    | Some (_, key) -> dispatch (KeyPress key)
+    | Some (_, key) ->
+        dispatch (KeyPress key)
+        shortcut.preventDefault ()
     | None -> ()
+
+let subscribeShortcuts initial =
+    let sub dispatch =
+        Browser.window.addEventListener_keydown
+            (fun shortcut -> handleShortcut shortcut dispatch)
+    Cmd.ofSub sub
 
 let viewButton (caption, key) dispatch =
     button
@@ -82,9 +91,7 @@ let viewTable keyTable dispatch =
 
 let view model dispatch =
     div
-        [
-            OnKeyPress (fun shortcut -> handleShortcut shortcut dispatch)
-        ]
+        []
         [
             div
                 [Style [FontSize 20]]
