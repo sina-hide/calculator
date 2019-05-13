@@ -94,7 +94,7 @@ let view model dispatch =
         []
         [
             div
-                [Style [FontSize 20]]
+                [Style [FontSize 30]]
                 [str (display model)]
             viewTable keyLayout dispatch
         ]
