@@ -2,6 +2,7 @@ module Calculator.View
 
 open Calculator.Model
 open Elmish
+open Fable.Core
 open Fable.Helpers.React
 open Fable.Helpers.React.Props
 open Fable.Import
@@ -34,14 +35,50 @@ let keyLayout =
         ]
     ]
 
+let additionalShortcutKeys = [
+    "c", ClearKey
+    "Escape", ClearKey
+    "Enter", EqualKey
+]
+
+let shortcutCodes = [
+    "Numpad0", Digit 0
+    "Numpad1", Digit 1
+    "Numpad2", Digit 2
+    "Numpad3", Digit 3
+    "Numpad4", Digit 4
+    "Numpad5", Digit 5
+    "Numpad6", Digit 6
+    "Numpad7", Digit 7
+    "Numpad8", Digit 8
+    "Numpad9", Digit 9
+    "NumpadDivide", Operator Division
+    "NumpadMultiply", Operator Multiplication
+    "NumpadSubtract", Operator Subtraction
+    "NumpadAdd", Operator Addition
+    "NumpadEnter", EqualKey
+    //"NumpadDecimal", ...
+]
+
+let shortcutKeyMap =
+    let layoutDerived = keyLayout |> Seq.concat
+    let allShortcutKeys = Seq.append layoutDerived additionalShortcutKeys
+    allShortcutKeys |> Map.ofSeq
+
+let shortcutCodeMap = Map.ofSeq shortcutCodes
+
+[<Emit("$0.code")>]
+let getShortcutEventCode (shortcut:Browser.KeyboardEvent) : string =
+    jsNative
+
 let handleShortcut (shortcut:Browser.KeyboardEvent) dispatch =
-    let pressedShortcut = shortcut.key
-    let foundCell =
-        keyLayout
-        |> List.concat
-        |> List.tryFind (fun (caption, key) -> caption = pressedShortcut)
-    match foundCell with
-    | Some (_, key) ->
+    let code = getShortcutEventCode shortcut
+    let key = shortcut.key
+    let found =
+        shortcutCodeMap.TryFind code
+        |> Option.orElse (shortcutKeyMap.TryFind key)
+    match found with
+    | Some key ->
         dispatch (KeyPress key)
         shortcut.preventDefault ()
     | None -> ()
@@ -82,11 +119,11 @@ let viewCell keyCell dispatch =
     td [] [viewButton keyCell dispatch]
 
 let viewRow keyRow dispatch =
-    let elements = keyRow |> List.map (fun keyCell -> viewCell keyCell dispatch)
+    let elements = keyRow |> Seq.map (fun keyCell -> viewCell keyCell dispatch)
     tr [] elements
 
 let viewTable keyTable dispatch =
-    let elements = keyTable |> List.map (fun keyRow -> viewRow keyRow dispatch)
+    let elements = keyTable |> Seq.map (fun keyRow -> viewRow keyRow dispatch)
     table [] [tbody [] elements]
 
 let view model dispatch =
